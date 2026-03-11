@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Smart Trip Tracker{% endblock %}
+
+{% block content %}
+<!-- Welcome Banner -->
+<div class="card mb-4" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: none;">
+    <div class="card-body py-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="text-white mb-1">Welcome back, {{ current_user.username }}! 👋</h2>
+                <p class="text-white-50 mb-0">Here's what's happening with your logistics today</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{{ url_for('new_trip') }}" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i> New Trip
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon primary">
+                <i class="fas fa-route"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total_trips }}</h3>
+                <p>Total Trips</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon success">
+                <i class="fas fa-road"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total_distance|round|int }}</h3>
+                <p>KM Traveled</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon warning">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+                <h3>${{ stats.total_cost|round|int }}</h3>
+                <p>Total Cost</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon info">
+                <i class="fas fa-leaf"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total_carbon|round|int }} kg</h3>
+                <p>CO2 Emissions</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trip Status Overview -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="stat-icon primary mx-auto mb-3" style="width: 48px; height: 48px;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h2 class="fw-bold text-warning mb-1">{{ stats.planned }}</h2>
+                <p class="text-muted mb-0">Planned Trips</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="stat-icon primary mx-auto mb-3" style="width: 48px; height: 48px;">
+                    <i class="fas fa-running"></i>
+                </div>
+                <h2 class="fw-bold text-primary mb-1">{{ stats.ongoing }}</h2>
+                <p class="text-muted mb-0">Ongoing Trips</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="stat-icon success mx-auto mb-3" style="width: 48px; height: 48px;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="fw-bold text-success mb-1">{{ stats.completed }}</h2>
+                <p class="text-muted mb-0">Completed</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Recent Trips -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-map-marked-alt me-2 text-primary"></i>Recent Trips</h5>
+                <a href="{{ url_for('trips') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_trips %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="px-4">Route</th>
+                                <th>Date</th>
+                                <th>Mode</th>
+                                <th>Distance</th>
+                                <th>Status</th>
+                                <th class="px-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trip in recent_trips %}
+                            <tr>
+                                <td class="px-4">
+                                    <div class="fw-semibold">{{ trip.start_location }}</div>
+                                    <small class="text-muted"><i class="fas fa-arrow-right me-1"></i>{{ trip.destination }}</small>
+                                </td>
+                                <td>{{ trip.start_date.strftime('%b %d') }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fas fa-{{ 'car' if trip.mode_of_transport == 'car' else 'bus' if trip.mode_of_transport == 'bus' else 'train' if trip.mode_of_transport == 'train' else 'plane' if trip.mode_of_transport == 'flight' else 'box' }} me-1"></i>
+                                        {{ trip.mode_of_transport|title }}
+                                    </span>
+                                </td>
+                                <td>{{ trip.distance }} km</td>
+                                <td>
+                                    <span class="badge badge-{{ trip.status }}">{{ trip.status|title }}</span>
+                                </td>
+                                <td class="px-4">
+                                    <a href="{{ url_for('trip_detail', trip_id=trip.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="stat-icon mx-auto mb-3" style="width: 64px; height: 64px; background: var(--gray-100); color: var(--gray-400);">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h5 class="text-muted">No trips yet</h5>
+                    <p class="text-muted">Start by creating your first trip!</p>
+                    <a href="{{ url_for('new_trip') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Create Trip
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-bolt me-2 text-warning"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <a href="{{ url_for('new_trip') }}" class="btn btn-outline-primary w-100 py-3">
+                            <i class="fas fa-plus-circle mb-2 d-block" style="font-size: 1.25rem;"></i>
+                            New Trip
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{{ url_for('new_delivery') }}" class="btn btn-outline-success w-100 py-3">
+                            <i class="fas fa-box mb-2 d-block" style="font-size: 1.25rem;"></i>
+                            New Delivery
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{{ url_for('trips') }}" class="btn btn-outline-info w-100 py-3">
+                            <i class="fas fa-list mb-2 d-block" style="font-size: 1.25rem;"></i>
+                            All Trips
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="{{ url_for('analytics') }}" class="btn btn-outline-warning w-100 py-3">
+                            <i class="fas fa-chart-pie mb-2 d-block" style="font-size: 1.25rem;"></i>
+                            Analytics
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Active Deliveries -->
+        <div class="card mb-4">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-boxes me-2 text-success"></i>Active Deliveries</h5>
+                <a href="{{ url_for('deliveries') }}" class="btn btn-sm btn-success">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if active_deliveries %}
+                <div class="list-group list-group-flush">
+                    {% for delivery in active_deliveries %}
+                    <a href="{{ url_for('delivery_detail', tracking_number=delivery.tracking_number) }}" class="list-group-item list-group-item-action border-0 py-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="fw-semibold">{{ delivery.tracking_number }}</div>
+                                <small class="text-muted">To: {{ delivery.receiver_name }}</small>
+                            </div>
+                            <span class="badge badge-{{ delivery.status }}">{{ delivery.status|replace('_', ' ')|title }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <div class="stat-icon mx-auto mb-2" style="width: 48px; height: 48px; background: var(--gray-100); color: var(--gray-400);">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <p class="mb-0 text-muted small">No active deliveries</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Export -->
+        <div class="card">
+            <div class="card-body">
+                <a href="{{ url_for('export_csv') }}" class="btn btn-outline-dark w-100">
+                    <i class="fas fa-download me-2"></i> Export Trips to CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

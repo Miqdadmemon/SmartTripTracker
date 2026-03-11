@@ -1,0 +1,561 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Trip Tracker - Logistics Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    .landing-page {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .landing-page::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+    }
+    
+    .landing-nav {
+        padding: 1.5rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+    }
+    
+    .nav-brand-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        color: white;
+    }
+    
+    .nav-brand-text {
+        color: white;
+        font-weight: 800;
+        font-size: 1.5rem;
+    }
+    
+    .nav-brand-text span {
+        color: #3b82f6;
+    }
+    
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+    
+    .nav-link {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    
+    .nav-link:hover {
+        color: white;
+    }
+    
+    .nav-cta {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .btn-nav {
+        padding: 0.625rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .btn-nav-outline {
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+    }
+    
+    .btn-nav-outline:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: white;
+    }
+    
+    .btn-nav-primary {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+        border: none;
+    }
+    
+    .btn-nav-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+    }
+    
+    .hero-section {
+        padding: 6rem 5% 4rem;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(37, 99, 235, 0.15);
+        border: 1px solid rgba(37, 99, 235, 0.3);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        color: #60a5fa;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 2rem;
+    }
+    
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        color: white;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-title span {
+        background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: rgba(255,255,255,0.6);
+        max-width: 600px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.6;
+    }
+    
+    .hero-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-hero {
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-hero-primary {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+        border: none;
+        box-shadow: 0 10px 40px rgba(37, 99, 235, 0.4);
+    }
+    
+    .btn-hero-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 50px rgba(37, 99, 235, 0.5);
+    }
+    
+    .btn-hero-outline {
+        background: transparent;
+        border: 2px solid rgba(255,255,255,0.3);
+        color: white;
+    }
+    
+    .btn-hero-outline:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: white;
+    }
+    
+    /* Stats Section */
+    .stats-section {
+        padding: 4rem 5%;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .stat-item {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        backdrop-filter: blur(10px);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.25rem;
+    }
+    
+    .stat-label {
+        color: rgba(255,255,255,0.5);
+        font-size: 0.875rem;
+    }
+    
+    /* Features Section */
+    .features-section {
+        padding: 6rem 5%;
+        background: #0f172a;
+        position: relative;
+    }
+    
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    
+    .section-subtitle {
+        color: rgba(255,255,255,0.5);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .feature-card {
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(37, 99, 235, 0.3);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .feature-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .feature-icon.blue {
+        background: rgba(37, 99, 235, 0.15);
+        color: #3b82f6;
+    }
+    
+    .feature-icon.green {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+    }
+    
+    .feature-icon.cyan {
+        background: rgba(6, 182, 212, 0.15);
+        color: #06b6d4;
+    }
+    
+    .feature-icon.purple {
+        background: rgba(139, 92, 246, 0.15);
+        color: #8b5cf6;
+    }
+    
+    .feature-icon.orange {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+    }
+    
+    .feature-icon.red {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+    
+    .feature-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 0.75rem;
+    }
+    
+    .feature-desc {
+        color: rgba(255,255,255,0.5);
+        line-height: 1.6;
+    }
+    
+    /* CTA Section */
+    .cta-section {
+        padding: 6rem 5%;
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        text-align: center;
+    }
+    
+    .cta-card {
+        background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+        border-radius: 24px;
+        padding: 4rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 1rem;
+    }
+    
+    .cta-desc {
+        color: rgba(255,255,255,0.8);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* Footer */
+    .landing-footer {
+        padding: 2rem 5%;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        text-align: center;
+        color: rgba(255,255,255,0.4);
+        font-size: 0.875rem;
+    }
+    
+    @media (max-width: 992px) {
+        .hero-title {
+            font-size: 3rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .nav-links {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.25rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .cta-card {
+            padding: 2rem;
+        }
+        
+        .cta-title {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block landing_content %}
+<div class="landing-page">
+    <!-- Navigation -->
+    <nav class="landing-nav">
+        <a href="{{ url_for('index') }}" class="nav-brand">
+            <div class="nav-brand-icon">
+                <i class="fas fa-route"></i>
+            </div>
+            <div class="nav-brand-text">Smart<span>Trip</span></div>
+        </a>
+        
+        <div class="nav-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+        
+        <div class="nav-cta">
+            <a href="{{ url_for('login') }}" class="btn-nav btn-nav-outline">Login</a>
+            <a href="{{ url_for('register') }}" class="btn-nav btn-nav-primary">Get Started</a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-badge">
+            <i class="fas fa-rocket"></i>
+            #1 Logistics Management Platform
+        </div>
+        
+        <h1 class="hero-title">
+            Smart Trip Tracker &<br>
+            <span>Logistics Management</span>
+        </h1>
+        
+        <p class="hero-subtitle">
+            Streamline your transportation operations with our comprehensive logistics platform. 
+            Track trips, manage deliveries, and analyze your fleet data - all in one place.
+        </p>
+        
+        <div class="hero-buttons">
+            <a href="{{ url_for('register') }}" class="btn-hero btn-hero-primary">
+                <i class="fas fa-rocket me-2"></i>Start Free Trial
+            </a>
+            <a href="{{ url_for('login') }}" class="btn-hero btn-hero-outline">
+                <i class="fas fa-play me-2"></i>Watch Demo
+            </a>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Trips Tracked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">5K+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1M+</div>
+                <div class="stat-label">KM Traveled</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="section-header">
+            <h2 class="section-title">Everything You Need</h2>
+            <p class="section-subtitle">Powerful features designed for modern logistics operations</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon blue">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3 class="feature-title">Trip Tracking</h3>
+                <p class="feature-desc">Record all your trips with detailed information including start location, destination, distance, and transport mode.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon green">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <h3 class="feature-title">Delivery Management</h3>
+                <p class="feature-desc">Track packages with unique tracking numbers and real-time status updates from pickup to delivery.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon cyan">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Advanced Analytics</h3>
+                <p class="feature-desc">Get insights into your operations with detailed statistics, charts, and route optimization suggestions.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon purple">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3 class="feature-title">Carbon Tracking</h3>
+                <p class="feature-desc">Calculate your carbon footprint and fuel consumption to make environmentally conscious decisions.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon orange">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="feature-title">Smart Search</h3>
+                <p class="feature-desc">Easily find trips and deliveries with powerful search and filter capabilities.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon red">
+                    <i class="fas fa-file-export"></i>
+                </div>
+                <h3 class="feature-title">Export Data</h3>
+                <p class="feature-desc">Export your data to CSV format for further analysis and record keeping.</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-card">
+            <h2 class="cta-title">Ready to Transform Your Logistics?</h2>
+            <p class="cta-desc">Join thousands of companies already using Smart Trip Tracker to streamline their operations.</p>
+            <a href="{{ url_for('register') }}" class="btn-hero btn-hero-primary">
+                <i class="fas fa-user-plus me-2"></i>Get Started Free
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <p>&copy; 2024 Smart Trip Tracker. All rights reserved. Built for Logistics Excellence.</p>
+    </footer>
+</div>
+{% endblock %}
+

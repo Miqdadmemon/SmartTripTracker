@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Deliveries - Smart Trip Tracker{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1 fw-bold">Delivery Tracking</h4>
+        <p class="text-muted mb-0">Track your package deliveries and logistics</p>
+    </div>
+    <a href="{{ url_for('new_delivery') }}" class="btn btn-success">
+        <i class="fas fa-plus me-1"></i> New Delivery
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('deliveries') }}" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="pending" {{ 'selected' if status_filter == 'pending' }}>Pending</option>
+                    <option value="picked_up" {{ 'selected' if status_filter == 'picked_up' }}>Picked Up</option>
+                    <option value="in_transit" {{ 'selected' if status_filter == 'in_transit' }}>In Transit</option>
+                    <option value="out_for_delivery" {{ 'selected' if status_filter == 'out_for_delivery' }}>Out for Delivery</option>
+                    <option value="delivered" {{ 'selected' if status_filter == 'delivered' }}>Delivered</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter me-1"></i> Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Deliveries Table -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold"><i class="fas fa-boxes me-2 text-success"></i>All Deliveries</h5>
+        <span class="badge bg-success">{{ deliveries|length }} Deliveries</span>
+    </div>
+    <div class="card-body p-0">
+        {% if deliveries %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="px-4">Tracking #</th>
+                        <th>Sender</th>
+                        <th>Receiver</th>
+                        <th>Status</th>
+                        <th>Est. Delivery</th>
+                        <th class="px-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for delivery in deliveries %}
+                    <tr>
+                        <td class="px-4">
+                            <div class="fw-semibold">{{ delivery.tracking_number }}</div>
+                            <small class="text-muted">{{ delivery.package_description[:30] if delivery.package_description else 'No description' }}</small>
+                        </td>
+                        <td>{{ delivery.sender_name }}</td>
+                        <td>{{ delivery.receiver_name }}</td>
+                        <td>
+                            <span class="badge badge-{{ delivery.status }}">{{ delivery.status|replace('_', ' ')|title }}</span>
+                        </td>
+                        <td>{{ delivery.estimated_delivery.strftime('%b %d, %Y') if delivery.estimated_delivery else 'N/A' }}</td>
+                        <td class="px-4">
+                            <a href="{{ url_for('delivery_detail', tracking_number=delivery.tracking_number) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="stat-icon mx-auto mb-3" style="width: 64px; height: 64px; background: var(--gray-100); color: var(--gray-400);">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h5 class="text-muted">No deliveries found</h5>
+            <p class="text-muted">Create your first delivery to start tracking</p>
+            <a href="{{ url_for('new_delivery') }}" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i> Create Delivery
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

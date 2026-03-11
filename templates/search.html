@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Smart Trip Tracker{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1 fw-bold">Search Results</h4>
+        <p class="text-muted mb-0">Results for "{{ query }}"</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Trips Results -->
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-route me-2 text-primary"></i>Trips ({{ trips|length }})</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if trips %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="px-4">Route</th>
+                                <th>Date</th>
+                                <th>Mode</th>
+                                <th>Status</th>
+                                <th class="px-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trip in trips %}
+                            <tr>
+                                <td class="px-4">
+                                    <div class="fw-semibold">{{ trip.start_location }}</div>
+                                    <small class="text-muted"><i class="fas fa-arrow-right me-1"></i>{{ trip.destination }}</small>
+                                </td>
+                                <td>{{ trip.start_date.strftime('%b %d, %Y') }}</td>
+                                <td>{{ trip.mode_of_transport|title }}</td>
+                                <td><span class="badge badge-{{ trip.status }}">{{ trip.status|title }}</span></td>
+                                <td class="px-4">
+                                    <a href="{{ url_for('trip_detail', trip_id=trip.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="text-muted mb-0">No trips found</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Deliveries Results -->
+        <div class="card">
+            <div class="card-header py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-boxes me-2 text-success"></i>Deliveries ({{ deliveries|length }})</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if deliveries %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="px-4">Tracking #</th>
+                                <th>Receiver</th>
+                                <th>Status</th>
+                                <th class="px-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for delivery in deliveries %}
+                            <tr>
+                                <td class="px-4 fw-semibold">{{ delivery.tracking_number }}</td>
+                                <td>{{ delivery.receiver_name }}</td>
+                                <td><span class="badge badge-{{ delivery.status }}">{{ delivery.status|replace('_', ' ')|title }}</span></td>
+                                <td class="px-4">
+                                    <a href="{{ url_for('delivery_detail', tracking_number=delivery.tracking_number) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="text-muted mb-0">No deliveries found</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Search Tips -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-search me-2 text-info"></i>Search Tips</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0 ps-3">
+                    <li class="mb-2">Search by location names</li>
+                    <li class="mb-2">Search by tracking numbers</li>
+                    <li class="mb-2">Search by sender/receiver names</li>
+                    <li>Search by notes content</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
